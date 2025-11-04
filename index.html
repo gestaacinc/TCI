@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TCI / LAYAG – Dissertation Proposal (Web Presentation)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1220;        /* deep navy */
+      --panel: #101827;     /* panel dark */
+      --text: #e6eefc;      /* near-white */
+      --muted: #a7b1c6;     /* muted text */
+      --accent: #22c55e;    /* green accent */
+      --warning: #f59e0b;   /* amber */
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* Audience View */
+    .stage { width: 100vw; height: 100vh; display: grid; place-items: center; padding: 2rem; overflow: hidden;
+      background: radial-gradient(1200px 700px at 80% -10%, rgba(34,197,94,.10), transparent 60%),
+                  radial-gradient(800px 500px at 0% 100%, rgba(59,130,246,.08), transparent 60%),
+                  var(--bg); }
+    .slide { width: min(1100px, 92vw); height: min(650px, 78vh); background: linear-gradient(180deg, #0e1930, #0b1426);
+      border: 1px solid rgba(255,255,255,.08); border-radius: 22px; padding: 42px 48px; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; justify-content: center; gap: 18px; position: relative; overflow: hidden; }
+    .slide::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(700px 400px at 90% 10%, rgba(34,197,94,.08), transparent 60%);
+      mix-blend-mode: screen; }
+    .slide-title { font-size: clamp(26px, 4.2vw, 46px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+    .slide-sub { font-size: clamp(16px, 2vw, 20px); color: var(--muted); margin-top: -6px; }
+    .bullets { margin-top: 6px; display: grid; gap: 10px; font-size: clamp(16px, 2.1vw, 22px); }
+    .bullets li { list-style: none; position: relative; padding-left: 28px; }
+    .bullets li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); position: absolute; left: 0; top: 9px; box-shadow: 0 0 0 4px rgba(34,197,94,.15); }
+    .footer { position: absolute; bottom: 20px; left: 32px; right: 32px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 14px; }
+    .kpis { display: flex; gap: 12px; align-items: center; }
+    .pill { padding: 6px 10px; border-radius: 999px; background: rgba(34,197,94,.12); color: #bbf7d0; border: 1px solid rgba(34,197,94,.25); font-size: 12px; }
+
+    .controls { position: fixed; inset: auto 20px 20px auto; display: flex; gap: 10px; }
+    .btn { background: var(--accent); color: #04120a; border: none; border-radius: 12px; padding: 10px 14px; font-weight: 700; font-size: 14px; cursor: pointer;
+      box-shadow: 0 10px 20px rgba(34,197,94,.25); transition: transform .08s ease, filter .2s ease, background .2s ease; }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:active { transform: translateY(1px); }
+    .btn.secondary { background: #1f2937; color: #e5e7eb; box-shadow: 0 10px 20px rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.08); }
+    .btn.warn { background: var(--warning); color: #0b0f1a; }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,.18); }
+
+    /* Presenter View */
+    .presenter { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; padding: 16px; height: 100vh; background: #0a0f1a; }
+    .p-left, .p-right { background: var(--panel); border-radius: 16px; padding: 14px; display: grid; grid-template-rows: auto 1fr auto; gap: 14px; }
+    .p-header { display: flex; align-items: center; justify-content: space-between; }
+    .mini-slide { background: #0d1627; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 16px; height: 320px; overflow: hidden; display: grid; gap: 8px; }
+    .mini-title { font-weight: 700; font-size: 18px; }
+    .mini-bullets { font-size: 14px; color: #c7d2fe; }
+    .mini-bullets li { margin-left: 18px; }
+    .grid-thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; overflow: auto; }
+    .thumb { border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 10px; cursor: pointer; background: #0d1627; }
+    .thumb.active { outline: 2px solid var(--accent); }
+
+    .notes-box { background: #0d1627; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 12px; overflow: auto; line-height: 1.5; color: #dbeafe; }
+    .timer { font-variant-numeric: tabular-nums; font-size: 18px; color: #93c5fd; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: #111827; color: #e5e7eb; padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,.1); }
+
+    /* NEW: logo + IPO image styles */
+    .logo { position:absolute; top:16px; left:16px; width:150px; height:auto; opacity:.95; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+    .hero-img { width: 100%; height: auto; max-height: 64vh; object-fit: contain; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); box-shadow: var(--shadow); background: rgba(255,255,255,.02); }
+
+    @media (max-width: 1100px) {
+      .presenter { grid-template-columns: 1fr; }
+      .mini-slide { height: auto; }
+      .grid-thumbs { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // ===== Slide Data (TCI / LAYAG) =====
+    const slides = [
+  {
+    title: "Transparent Competency-to-Industry Framework",
+    sub: "Evaluating the LAYAG Platform for Aligning Trainee Progress, Enhancing Readiness, and Enabling Skills Matching at GESTAAC Inc",
+    bullets: [
+      "Chester Allan F. Bautista",
+      "Doctor of Philosophy in Technology Education Management",
+      "Don Mariano Marcos Memorial State University",
+      "College of Graduate Studies"
+    ],
+    notes: `Good morning, members of the panel. My name is Chester Allan Bautista, and today I am presenting my dissertation proposal, titled 'Transparent Competency-to-Industry Framework: Evaluating the "LAYAG" Platform for Aligning Trainee Progress, Enhancing Readiness, and Enabling Skills-Matching at GESTAAC Inc.'`
+  },
+  {
+    title: "Situation Analysis: The ‘Transparency Deficit’",
+    sub: "The core problem",
+    bullets: [
+      "The National Failure: Skills mismatch persists. Employers struggle to verify specific competencies. (Generalao, 2025; World Bank, 2023; PIDS, 2023).",
+      "The Provincial Failure: Amplified locally with a 52.5% job-skill mismatch rate (Ancheta et al., 2020).",
+      "The Core Problem: A 'Transparency Deficit.' CBC outcomes → assessments → industry signals are disconnected. Evidence flow is unclear. (Monteverde et al., 2025).",
+      "The Effects: Uneven trainee readiness, weak remediation, and low employer confidence. Paper-based portfolios are 'impossible to monitor at scale' (Kinoti et al., 2025; Guiling et al., 2024).",
+      "The Opportunity (Gap): A single, integrated, and auditable evidence system that enforces construct alignment (Biggs, 1996) and makes competency data actionable (Masiello et al., 2024)."
+    ],
+    notes: `Good morning. My research begins with a persistent national failure. Despite TESDA's correct strategy of 'Area-based Demand-driven TVET,' the data shows it is failing. Generalao reports TVET underemployment as high as 43% because, as the World Bank and PIDS note, employers struggle to verify specific competencies.
+
+This failure is amplified provincially. A key tracer study in Ilocos Sur found a staggering 52.5% job-skill mismatch.
+
+My proposal argues this is a 'Transparency Deficit.' As this flow-chart shows, the connection between our curriculum outcomes, our assessments, and the signals we send to industry partners is broken. The evidence flow is unclear.
+
+The effects of this are clear: uneven trainee readiness, weak remediation, and low confidence from employers. As Kinoti and others found, our current paper-based system is 'impossible to monitor at scale.'
+
+This reveals the central opportunity and the gap in the research: the need for a single, integrated, and auditable system that technologically enforces construct alignment and finally makes competency data visible and actionable for everyone.`
+  },
+  {
+    title: "Research Paradigm (Input–Process–Output)",
+    sub: "The Big Picture",
+    /* CHANGE #2: replace slide content with IPO image */
+    image: "research-design.png",
+    notes: `This diagram illustrates my research paradigm, which shows the logical flow of the entire study. The Input is the practical problem I just described—the 'Transparency Deficit' at my research locale, GESTAAC Inc.
+
+This problem is viewed through three theoretical anchors: First, Biggs' 'Construct Alignment' as the pedagogical foundation—this is the 'what' we need to fix. Second, 'Design-Based Research' as the pragmatic methodology—this is 'how' we will build and test a solution in the real world. And third, the 'Technology Acceptance Model' as the evaluative lens for that solution.
+
+The Process is the Design-Based Research methodology itself. As you can see, it's an iterative cycle of analysis, design, and evaluation, which maps directly to my five research questions.
+
+The final Output—and I want to emphasize this—is not the 'LAYAG' software. The software is merely the artifact used for testing. The true academic contribution is the validated 'TCI Framework'—a new theoretical model—and the set of transferable 'Design Principles' that other TVET institutions can use to solve their own transparency deficits.`
+  },
+  {
+    title: "Statement of the Problem",
+    sub: "The Roadmap",
+    bullets: [
+      "Overall Aim: To solve the 'transparency deficit' at GESTAAC Inc. by designing, implementing, and evaluating the TCI Framework.",
+      "Specific Questions:",
+      "What are the specific challenges and stakeholder needs?",
+      "How is the 'LAYAG' platform designed and iteratively refined?",
+      "How do stakeholders perceive its usability and utility (TAM)?",
+      "What is the platform's initial perceived impact?",
+      "What is the final, validated TCI Framework and the resulting evidence-based design principles?"
+    ],
+    notes: `My overall aim, therefore, is to solve this 'transparency deficit' at GESTAAC by designing, implementing, and evaluating the TCI Framework. This aim is broken down into these five specific research questions.
+
+These questions form the roadmap for my study. They are not random; they are designed to follow the Design-Based Research cycle precisely. They move logically from:
+
+Diagnosis (What is the problem?)
+
+Design (What is the solution?)
+
+Evaluation (Does the solution work? Will they use it?)
+
+Synthesis (What did we learn? What is the contribution?)
+
+I will now walk you through each question and detail the specific methodology I will use to answer it, showing the 'golden thread' that connects my problem to my methods.`
+  },
+  {
+    title: "SOP 1: Needs Analysis & Methodology",
+    sub: "Question 1: Stakeholder Needs",
+    bullets: [
+      "Research Question 1:",
+      "'What are the specific challenges, stakeholder needs, and existing processes related to the transparency deficit at GESTAAC Inc?'",
+      "Methodology (DBR Cycle 1):",
+      "Instruments: Semi-Structured Interviews & Document Analysis (of CBCs, lesson plans, assessment tools).",
+      "Sampling: Phase 1: Multi-stage purposive sampling of 8-10 key informants (Administrators, Senior Trainers, Industry Partners).",
+      "Analysis: Thematic Analysis (Braun & Clarke, 2006).",
+      "Output: A rich diagnosis of the 'transparency deficit' to inform the solution's design."
+    ],
+    notes: `My first question seeks to deeply understand the problem: 'What are the specific challenges at GESTAAC?' This is the foundational 'Analysis & Exploration' phase of my DBR cycle.
+
+To answer this, I cannot rely on assumptions; I must gather data from the source. My methodology for this question is qualitative.
+
+My Instruments will be, first, semi-structured interviews, to capture the lived experiences of stakeholders. Second, I will perform a systematic document analysis of their existing Competency-Based Curriculum, lesson plans, and paper-based assessment tools. This is to find the gap between the intended curriculum and the enacted curriculum.
+
+My Sampling will be purposive, targeting 8-10 key informants—the administrators, senior trainers, and local industry partners who live this problem every day.
+
+The Analysis will be a rigorous Thematic Analysis to identify the core themes of this 'transparency deficit.'
+
+The Output of this phase is critical: it is an evidence-based diagnosis of the problem, which will serve as the direct blueprint for the design of the 'LAYAG' platform in the next phase. This ensures the solution is grounded in data, not guesswork.`
+  },
+  {
+    title: "SOP 2: Design & Refinement Methodology",
+    sub: "Question 2: Platform Design",
+    bullets: [
+      "Research Question 2:",
+      "'How is the \"LAYAG\" platform designed, built, and iteratively refined... to solve the challenges identified in SOP 1...?'",
+      "Methodology (DBR Cycle 2):",
+      "Instruments: Researcher's Field Notes, Software Version Logs, and Usability Testing Protocols.",
+      "Sampling: Phase 2: Purposive sample of 5-7 end-users (trainees, trainers) for rapid, actionable feedback.",
+      "Analysis: Descriptive Narrative.",
+      "Output: A detailed 'design journey' showing why each platform feature was built, linking it directly to the needs identified in Question 1."
+    ],
+    notes: `My second question logically follows: 'How is the platform designed to solve the challenges we just identified in SOP 1?' This is the 'Design and Refinement' cycle of DBR.
+
+The methodology here is to document the iterative design process.
+My Instruments are the artifacts of the DBR process itself: my detailed researcher's field notes, software version logs to track changes, and the usability testing protocols I will use with end-users.
+
+My Sampling will be a small, purposive group of 5-7 end-users. The goal here is not statistical significance, but rapid, actionable feedback. This is to find and fix usability problems before the main pilot study.
+
+The Analysis will be a Descriptive Narrative.
+
+The Output of this phase is an auditable 'design journey.' This narrative is my answer to the question. It will show why every single feature exists, linking each design decision back to a specific stakeholder need identified in Question 1. This ensures the solution is grounded in evidence before we pilot it.`
+  },
+  {
+    title: "SOP 3: User Acceptance (TAM)",
+    sub: "Question 3: User Acceptance (TAM)",
+    bullets: [
+      "Research Question 3:",
+      "'How do the platform's key stakeholders... perceive the usability and utility of its core modules, as measured by the Technology Acceptance Model (TAM)?'",
+      "Methodology (DBR Cycle 3):",
+      "Instrument: Validated Technology Acceptance Model (TAM) Questionnaire (Likert scale).",
+      "Sampling: Phase 3: An intact class (approx. 10-15 trainees), their trainers, and industry partners.",
+      "Analysis: Descriptive & Inferential Statistics (Mean, Median, and Pearson's r correlational analysis).",
+      "Output: Quantitative measure of stakeholder acceptance (Perceived Usefulness & Ease of Use)."
+    ],
+    notes: `Once the platform is built and refined, we move to the 'Pilot Implementation' phase, which is covered by Questions 3 and 4.
+
+My third question asks the most crucial question for any new technology: 'Even if we build a perfect solution, will they actually use it?' This is the question of acceptance.
+
+To answer this, my Methodology is quantitative, using the most robust and widely cited model for this purpose: the Technology Acceptance Model, or TAM.
+
+My Instrument will be the validated TAM Questionnaire. This measures two key constructs: first, 'Perceived Usefulness,' or 'Do they believe this will enhance their performance?' And second, 'PerC:eived Ease of Use,' or 'Do they believe it will be free of effort?'
+
+My Sampling for this phase expands to an intact class of 10-15 trainees, their trainers, and the industry partners to get a complete ecosystem view.
+
+My Analysis will use descriptive statistics (Mean, Median) to summarize their perceptions, and inferential statistics—specifically, a Pearson's r correlation—to test the core TAM hypothesis of whether Ease of Use significantly predicts Usefulness in this context.
+
+The Output will be a clear, quantitative measure of stakeholder acceptance, which is a critical prerequisite for any long-term impact.`
+  },
+  {
+    title: "SOP 4: Perceived Impact & Methodology",
+    sub: "Question 4: Perceived Impact",
+    bullets: [
+      "Research Question 4:",
+      "'What is the initial, perceived impact of the 'LAYAG' platform on: (a) trainer's data-driven decisions, (b) trainee's self-awareness, and (c) industry's confidence?'",
+      "Methodology (DBR Cycle 3):",
+      "Instruments: LAYAG Platform Analytics, Perceived Impact Questionnaire (Likert), and Semi-Structured Impact Interviews.",
+      "Sampling: Phase 3 cohort (intact class, trainers, industry).",
+      "Analysis: Mixed-Methods Explanatory Analysis.",
+      "Output: A mixed-methods explanation of the framework's initial impact, combining quantitative scores with qualitative 'why' themes."
+    ],
+    notes: `Following the 'will they use it?' of Question 3, my fourth question, also part of the pilot, asks: 'So what? Does it actually work?' Does it begin to solve the problem we started with?
+
+Specifically, I am measuring the perceived impact on the three key pain points identified in SOP 1: the trainer's ability to make data-driven decisions, the trainee's self-awareness of their own progress, and the industry partner's confidence in the skills-matching process.
+
+My Methodology here is a Mixed-Methods Explanatory Analysis. This is essential. I will first gather quantitative data—the 'what'—using the platform's own analytics and a Perceived Impact Questionnaire. Then, I will gather qualitative data—the 'why'—using semi-structured impact interviews.
+
+My Sampling is the same Phase 3 cohort.
+
+The Analysis is where the power lies. I will first analyze the quantitative scores, and then use the thematic analysis from the interviews to explain those scores. For example, if 'trainee self-awareness' scores high, the interviews will tell me why—perhaps because of the platform's spider-chart visualizations. The Output is a rich, mixed-methods explanation of the framework's initial, real-world effects.`
+  },
+  {
+    title: "SOP 5: Synthesis & Contribution Methodology",
+    sub: "Question 5: The Validated Framework",
+    bullets: [
+      "Research Question 5:",
+      "'Based on the cyclical evaluation... what is the final, validated 'Transparent Competency-to-Industry' (TCI) Framework, and what are the resulting evidence-based design principles...?'",
+      "Methodology (DBR Cycle 4):",
+      "Instruments: All data collected from SOP 1, 2, 3, and 4.",
+      "Analysis: Final Mixed-Methods Synthesis.",
+      "Output: The study's primary deliverables:",
+      "The Validated TCI Framework (Theory).",
+      "Transferable Design Principles (Practice)."
+    ],
+    notes: `"My final research question is the culmination of the entire study. It does not involve new data collection. Instead, it is the 'Evaluation and Synthesis' cycle of DBR.
+
+The question asks, 'Based on everything we learned, what is the final, validated TCI Framework and what are the transferable design principles?'
+
+My Methodology is a Final Mixed-Methods Synthesis. This is where I bring all the pieces of the puzzle together.
+
+My Instruments are the answers from SOP 1, 2, 3, and 4.
+
+My Analysis is a comprehensive triangulation. I will take the needs identified in Question 1... see how they were addressed by the design in Question 2... measure their acceptance in Question 3... and evaluate their impact in Question 4.
+
+By synthesizing all these findings, I will produce my two primary outputs: First, the Validated TCI Framework, which is my theoretical contribution. And second, the 'Evidence-Based Design Principles,' which is my practical, transferable contribution that other TVET institutions can use."`
+  },
+  {
+    title: "Significance & Contribution to Knowledge",
+    sub: "Significance of the Study",
+    bullets: [
+      "Practical Contribution:",
+      "Provides a validated, data-driven solution to the 'transparency deficit' for GESTAAC Inc.",
+      "Theoretical Contribution:",
+      "The Validated 'Transparent Competency-to-Industry' (TCI) Framework: A new, integrated conceptual model for TVET that technologically enforces construct alignment.",
+      "Transferable Contribution (The 'So What?'):",
+      "Evidence-Based Design Principles that provide a replicable roadmap for other TVET institutions to successfully implement TESDA's 'Area-based Demand-driven' strategy."
+    ],
+    notes: `Finally, the significance of this work.
+First, it has a Practical Contribution: It aims to solve a real-world, persistent 'transparency deficit' for GESTAAC Inc.
+
+Second, it has a Theoretical Contribution: It produces the 'Validated TCI Framework,' which serves as a new, integrated conceptual model for our field—one that technologically enforces Biggs' Construct Alignment, moving it from a pedagogical idea to an auditable, data-driven system.
+
+But most importantly, the Transferable Contribution—the 'so what?' of this entire dissertation—is the set of 'Evidence-Based Design Principles.' This is the transferable roadmap. It will provide other TVET institutions with a validated, practical guide on how they can actually implement TESDA's 'Area-based Demand-driven' strategy and, finally, begin to close the persistent, documented gap between our educational system and the needs of our industry.`
+  },
+  {
+    title: "Thank You",
+ 
+    bullets: [
+      "Questions, clarifications, and recommendations are welcome."
+    ],
+    notes: `Thank you for your time and attention. I welcome your questions, clarifications, and recommendations.`
+  }
+];
+
+    // ===== Utilities =====
+    const qs = (s, el=document) => el.querySelector(s);
+    const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+    const mode = new URLSearchParams(location.search).get('mode') || 'audience';
+    const channel = new BroadcastChannel('tci-layag-slidesync');
+    let state = { index: 0 };
+
+    function renderAudience() {
+      const root = qs('#app');
+      root.innerHTML = `
+        <div class="stage" tabindex="0">
+          <div class="slide" aria-live="polite">
+            <!-- CHANGE #1: logo shown only on slide 1 -->
+            <img id="aud-logo" class="logo" src="school-logo.png" alt="School Logo">
+            <div class="slide-title" id="s-title"></div>
+            <div class="slide-sub" id="s-sub"></div>
+            <!-- bullets container -->
+            <ul class="bullets" id="s-bullets"></ul>
+            <!-- IPO image container -->
+            <img id="s-image" class="hero-img" alt="" style="display:none;" />
+            <div class="footer">
+              <div class="kpis"><span class="pill">TCI / LAYAG</span><span id="page"></span></div>
+              <div>Press <span class="kbd">←</span> <span class="kbd">→</span> · <span class="kbd">P</span> Presenter</div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn secondary" id="btn-presenter">Open Presenter View</button>
+            <button class="btn ghost" id="btn-prev">◀ Prev</button>
+            <button class="btn" id="btn-next">Next ▶</button>
+          </div>
+        </div>
+      `;
+      bindAudience();
+      updateAudience();
+    }
+
+    function bindAudience() {
+      qs('#btn-next').addEventListener('click', () => go(+1));
+      qs('#btn-prev').addEventListener('click', () => go(-1));
+      const stage = qs('.stage');
+      stage.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') go(+1);
+        if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   go(-1);
+        if (e.key.toLowerCase() === 'p') openPresenter();
+      });
+      stage.focus();
+      qs('#btn-presenter').addEventListener('click', openPresenter);
+
+      channel.onmessage = (ev) => {
+        const { type, payload } = ev.data || {};
+        if (type === 'GOTO') { state.index = clamp(payload.index, 0, slides.length-1); updateAudience(); }
+        if (type === 'SYNC_REQUEST') { channel.postMessage({ type: 'SYNC_STATE', payload: { index: state.index } }); }
+        if (type === 'NEXT') { go(+1, true); }
+        if (type === 'PREV') { go(-1, true); }
+      };
+    }
+
+    function updateAudience() {
+      const s = slides[state.index];
+  qs('#s-title').textContent = s.title;
+  // subtitle may contain simple HTML (e.g. <strong>) — render as HTML
+  qs('#s-sub').innerHTML = s.sub || '';
+
+      const ul = qs('#s-bullets');
+      const img = qs('#s-image');
+      const logo = qs('#aud-logo');
+
+      // toggle logo only on first slide
+      if (logo) logo.style.display = state.index === 0 ? 'block' : 'none';
+
+      // if slide has an image field, show image instead of bullets
+      if (s.image) {
+        ul.style.display = 'none';
+        img.style.display = 'block';
+        img.src = s.image;
+        img.alt = s.sub || s.title || 'Slide image';
+      } else {
+        img.style.display = 'none';
+        ul.style.display = 'grid';
+        ul.innerHTML = (s.bullets||[]).map(b => `<li>${escapeHTML(b)}</li>`).join('');
+      }
+
+      qs('#page').textContent = `Slide ${state.index+1} / ${slides.length}`;
+      document.title = `${s.title} – TCI / LAYAG`;
+    }
+
+    function openPresenter() {
+      const url = location.pathname + '?mode=presenter';
+      const win = window.open(url, 'PresenterView-TCI');
+      if (!win) alert('Please allow popups to open the Presenter View.');
+      setTimeout(() => channel.postMessage({ type: 'SYNC_STATE', payload: { index: state.index } }), 300);
+    }
+
+    function go(delta, fromRemote=false) {
+      state.index = clamp(state.index + delta, 0, slides.length-1);
+      updateAudience();
+      if (!fromRemote) channel.postMessage({ type: 'GOTO', payload: { index: state.index } });
+    }
+
+    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+    function escapeHTML(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+
+    // Presenter View (unchanged except existing layout)
+    function renderPresenter() {
+      const root = qs('#app');
+      root.innerHTML = `
+        <div class="presenter">
+          <!-- Left: Current & Next -->
+          <section class="p-left">
+            <header class="p-header">
+              <div>
+                <strong>Presenter View</strong>
+                <div style="color: var(--muted); font-size: 12px;">Use <span class="kbd">←</span> <span class="kbd">→</span> or buttons · Syncs to audience tab</div>
+              </div>
+              <div class="timer" id="timer">00:00:00</div>
+            </header>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="mini-slide">
+                <div class="mini-title" id="cur-title"></div>
+                <ul class="mini-bullets" id="cur-bullets"></ul>
+              </div>
+              <div class="mini-slide">
+                <div class="mini-title">Next</div>
+                <div class="mini-title" id="next-title" style="font-weight:600; font-size:16px;"></div>
+                <ul class="mini-bullets" id="next-bullets"></ul>
+              </div>
+            </div>
+            <footer class="p-header">
+              <div id="pager"></div>
+              <div>
+                <button class="btn ghost" id="p-prev">◀ Prev</button>
+                <button class="btn" id="p-next">Next ▶</button>
+              </div>
+            </footer>
+          </section>
+
+          <!-- Right: Notes & Thumbnails -->
+          <section class="p-right">
+            <header class="p-header">
+              <strong>Notes</strong>
+              <div>
+                <button class="btn secondary" id="p-resync">Re-Sync</button>
+                <button class="btn warn" id="p-reset">Reset Timer</button>
+              </div>
+            </header>
+            <div class="notes-box" id="notes"></div>
+            <footer>
+              <div style="margin-bottom:10px; font-size:13px; color:var(--muted);">Jump to slide</div>
+              <div class="grid-thumbs" id="thumbs"></div>
+            </footer>
+          </section>
+        </div>
+      `;
+
+      // Bindings
+      qs('#p-next').addEventListener('click', () => cmdNext());
+      qs('#p-prev').addEventListener('click', () => cmdPrev());
+      qs('#p-resync').addEventListener('click', () => channel.postMessage({ type: 'SYNC_REQUEST' }));
+      qs('#p-reset').addEventListener('click', () => { t0 = Date.now(); renderTimer(); });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') cmdNext();
+        if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   cmdPrev();
+      });
+
+      // Thumbnails
+      const thumbs = qs('#thumbs');
+      thumbs.innerHTML = slides.map((s,i)=>`<div class="thumb" data-i="${i}"><div style="font-weight:600; font-size:13px; margin-bottom:6px;">${i+1}. ${escapeHTML(s.title)}</div><div style="color:#93c5fd; font-size:12px;">${(s.bullets||[]).slice(0,3).map(b=>`• ${escapeHTML(b)}`).join('<br>')}</div></div>`).join('');
+      thumbs.addEventListener('click', (e)=>{
+        const el = e.target.closest('.thumb');
+        if (!el) return;
+        const idx = +el.dataset.i;
+        state.index = clamp(idx, 0, slides.length-1);
+        updatePresenter();
+        channel.postMessage({ type: 'GOTO', payload: { index: idx } });
+      });
+
+      // Channel events
+      channel.onmessage = (ev) => {
+        const { type, payload } = ev.data || {};
+        if (type === 'GOTO' || type === 'SYNC_STATE') {
+          state.index = clamp(payload.index, 0, slides.length-1);
+          updatePresenter();
+        }
+      };
+
+      // Kick off sync request
+      channel.postMessage({ type: 'SYNC_REQUEST' });
+
+      // Timer
+      startTimer();
+    }
+
+    function updatePresenter(){
+      const cur = slides[state.index];
+      const nxt = slides[state.index+1];
+      qs('#cur-title').textContent = cur.title;
+      qs('#cur-bullets').innerHTML = (cur.bullets||[]).map(b=>`<li>${escapeHTML(b)}</li>`).join('');
+      qs('#notes').textContent = cur.notes || '';
+      if (nxt){
+        qs('#next-title').textContent = nxt.title;
+        qs('#next-bullets').innerHTML = (nxt.bullets||[]).slice(0,4).map(b=>`<li>${escapeHTML(b)}</li>`).join('');
+      } else {
+        qs('#next-title').textContent = 'End';
+        qs('#next-bullets').innerHTML = '';
+      }
+      qs('#pager').textContent = `Slide ${state.index+1} / ${slides.length}`;
+      qsa('.thumb').forEach((t,i)=> t.classList.toggle('active', i===state.index));
+    }
+
+    function cmdNext(){
+      const newIndex = clamp(state.index + 1, 0, slides.length-1);
+      state.index = newIndex;
+      updatePresenter();
+      channel.postMessage({ type: 'GOTO', payload: { index: newIndex } });
+    }
+    function cmdPrev(){
+      const newIndex = clamp(state.index - 1, 0, slides.length-1);
+      state.index = newIndex;
+      updatePresenter();
+      channel.postMessage({ type: 'GOTO', payload: { index: newIndex } });
+    }
+
+    // Stopwatch
+    let t0 = null, timerId = null; 
+    function startTimer(){ t0 = Date.now(); timerId = setInterval(renderTimer, 200);} 
+    function resetTimer(){ t0 = Date.now(); renderTimer(); }
+    function renderTimer(){ if(!t0) return; const ms = Date.now()-t0; const h=String(Math.floor(ms/3600000)).padStart(2,'0'); const m=String(Math.floor((ms%3600000)/60000)).padStart(2,'0'); const s=String(Math.floor((ms%60000)/1000)).padStart(2,'0'); const el=qs('#timer'); if(el) el.textContent=`${h}:${m}:${s}`; }
+
+    // Boot
+    if (mode === 'presenter') { renderPresenter(); } else { renderAudience(); }
+  </script>
+</body>
+</html>
